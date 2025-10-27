@@ -1,0 +1,107 @@
+[
+    {
+        "Epoch": "0",
+        "KL Divergences": "36.2365",
+        "Wsserstein Distances": "0.5237"
+    },
+    {
+        "Epoch": "1000",
+        "KL Divergences": "24.0438",
+        "Wsserstein Distances": "0.0549"
+    },
+    {
+        "Epoch": "2000",
+        "KL Divergences": "15.2298",
+        "Wsserstein Distances": "0.0245"
+    },
+    {
+        "Epoch": "3000",
+        "KL Divergences": "17.1918",
+        "Wsserstein Distances": "0.0311"
+    },
+    {
+        "Epoch": "4000",
+        "KL Divergences": "4.6170",
+        "Wsserstein Distances": "0.0234"
+    },
+    {
+        "Epoch": "5000",
+        "KL Divergences": "7.3845",
+        "Wsserstein Distances": "0.0207"
+    },
+    {
+        "Epoch": "6000",
+        "KL Divergences": "22.0293",
+        "Wsserstein Distances": "0.0465"
+    },
+    {
+        "Epoch": "7000",
+        "KL Divergences": "11.5767",
+        "Wsserstein Distances": "0.0307"
+    },
+    {
+        "Epoch": "8000",
+        "KL Divergences": "7.2706",
+        "Wsserstein Distances": "0.0168"
+    },
+    {
+        "Epoch": "9000",
+        "KL Divergences": "3.4353",
+        "Wsserstein Distances": "0.0167"
+    },
+    {
+        "Epoch": "10000",
+        "KL Divergences": "1.2256",
+        "Wsserstein Distances": "0.0191"
+    },
+    {
+        "Epoch": "11000",
+        "KL Divergences": "3.6899",
+        "Wsserstein Distances": "0.0223"
+    },
+    {
+        "Epoch": "12000",
+        "KL Divergences": "0.2952",
+        "Wsserstein Distances": "0.0074"
+    },
+    {
+        "Epoch": "13000",
+        "KL Divergences": "9.1297",
+        "Wsserstein Distances": "0.0305"
+    },
+    {
+        "Epoch": "14000",
+        "KL Divergences": "7.5542",
+        "Wsserstein Distances": "0.0234"
+    },
+    {
+        "Epoch": "15000",
+        "KL Divergences": "21.2114",
+        "Wsserstein Distances": "0.0455"
+    },
+    {
+        "Epoch": "16000",
+        "KL Divergences": "6.1916",
+        "Wsserstein Distances": "0.0219"
+    },
+    {
+        "Epoch": "17000",
+        "KL Divergences": "19.1951",
+        "Wsserstein Distances": "0.0298"
+    },
+    {
+        "Epoch": "18000",
+        "KL Divergences": "16.6711",
+        "Wsserstein Distances": "0.0431"
+    },
+    {
+        "Epoch": "19000",
+        "KL Divergences": "14.0537",
+        "Wsserstein Distances": "0.0365"
+    },
+    {
+        "Epoch": "20000",
+        "KL Divergences": "3.6391",
+        "Wsserstein Distances": "0.0222"
+    }
+]
