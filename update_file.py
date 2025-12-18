@@ -5,7 +5,6 @@ df = pd.read_csv("gan_20k.csv", header=0)   # your current file
 # Rename columns (update this map to your true ordering)
 df.columns = ["pt_GeV","eta","phi_rad","m_GeV"]
 
-# --- optional: denormalize using your stored scaler params ---
 # Example for MinMax on each column:
 # mins  = np.array([pt_min, eta_min, phi_min, m_min], dtype=float)
 # maxs  = np.array([pt_max, eta_max, phi_max, m_max], dtype=float)

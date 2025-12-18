@@ -2,14 +2,12 @@ import numpy as np, time, pandas as pd
 import tensorflow as tf 
 from keras.models import load_model
 
-# Load for inference only (no compile needed)
+# Load for inference only
 generator = load_model("generator_model.h5", compile=False)
 
 def get_latent_dim(model):
-    # Handles models with a single input tensor
     ishape = model.input_shape
     if isinstance(ishape, (list, tuple)) and isinstance(ishape[0], (list, tuple)):
-        # if multiple inputs, ishape may be a list; first is usually z
         ishape = ishape[0]
     return int(ishape[-1])
 
