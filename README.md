@@ -1,6 +1,6 @@
 # CERN Station
 # Generative Visualization of Particle Collisions Using Physics-Informed Mappings
-paper: https://drive.google.com/file/d/1bWyxI_Xp0FliIQ23EW3DHbzVSPb8KyaI/view?usp=sharing
+paper: https://drive.google.com/file/d/1oXyoA6GCsiiKh0N340yiJsB-nDRPDa_W/view?usp=sharing
 training data: https://www.kaggle.com/datasets/fedesoriano/cern-electron-collision-data?resource=download 
 
 # OVERVIEW
