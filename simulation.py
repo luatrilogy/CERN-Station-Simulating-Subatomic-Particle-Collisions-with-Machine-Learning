@@ -3,7 +3,8 @@ import tensorflow as tf
 from keras.models import load_model
 
 # Load for inference only
-generator = load_model("generator_model.h5", compile=False)
+G_PATH = ".\gen\generator_model.h5"
+generator = load_model(G_PATH, compile=False)
 
 def get_latent_dim(model):
     ishape = model.input_shape
@@ -33,4 +34,4 @@ def generate_events_auto(gen, n_events=20000, batch_size=2048, seed=42, outfile=
     return samples, elapsed
 
 # Run
-events, elapsed = generate_events_auto(generator, n_events=100000, batch_size=2048, outfile="gan_100k.csv")
+events, elapsed = generate_events_auto(generator, n_events=50000, batch_size=2048, outfile="gan_50k.csv")

@@ -12,18 +12,20 @@ from tqdm import trange
 from matplotlib.animation import FuncAnimation
 from mpl_toolkits.mplot3d import Axes3D
 from scipy import stats
+from matplotlib.colors import LogNorm
+from mpl_toolkits.axes_grid1 import make_axes_locatable
 from scipy.stats import entropy, wasserstein_distance
 from json_append import append_to_json_array, clear_json_file_array
 
 clear_json_file_array("KL_W_Info.json")
 clear_json_file_array("synthetic.json")
 
-# Metric tracking lists
+# Metric tracking lists 
 kl_divergences = []
 wasserstein_distances = []
 epoch_list = []
 
-df = pd.read_csv("dielectron.csv")
+df = pd.read_csv(".\gen\dielectron.csv")
 
 # Select needed features
 features = ["pt1", "eta1", "phi1", "E1"]  # Make sure CSV includes energy
@@ -261,45 +263,108 @@ synthetic = synthetic * (X_max - X_min) + X_min
 # Convert real data to array for plotting
 real_eval = df[gan_features].values
 
-# Plot 2D histogram: pt vs eta
-fig, axs = plt.subplots(1, 2, figsize=(12, 5))
-axs[0].hist2d(real_eval[:, 0], real_eval[:, 1], bins=50, cmap='Blues')
+# Plot 2D histogram: pt vs eta (shared axes + shared color scale)
+fig, axs = plt.subplots(1, 2, figsize=(12, 5), sharex=True, sharey=True)
+
+# Choose a common plotting window (real-based is typical)
+pt_hi = np.quantile(real_eval[:, 0], 0.995)   # robust upper bound (avoid a few extreme outliers)
+eta_lo, eta_hi = np.quantile(real_eval[:, 1], [0.005, 0.995])
+
+# Or, if you prefer fixed “physics-style” bounds, use something like:
+# pt_hi = 250
+# eta_lo, eta_hi = -2.5, 2.5
+
+bins = 60
+range_ = [[0, pt_hi], [eta_lo, eta_hi]]
+
+# Compute histograms first so we can share a vmax across both panels
+H_real, xedges, yedges = np.histogram2d(real_eval[:, 0], real_eval[:, 1], bins=bins, range=range_)
+H_fake, _, _ = np.histogram2d(synthetic[:, 0], synthetic[:, 1], bins=bins, range=range_)
+vmax = max(H_real.max(), H_fake.max())
+
+extent = [xedges[0], xedges[-1], yedges[0], yedges[-1]]
+
+# Log scale makes both dense core + sparse tails visible
+# (requires vmin >= 1). If you ever get all-zero bins, set vmin=1 anyway.
+norm = LogNorm(vmin=1, vmax=max(1, vmax))
+
+im0 = axs[0].imshow(
+    H_real.T,
+    origin="lower",
+    extent=extent,
+    aspect="auto",
+    cmap="Blues",
+    norm=norm,
+)
 axs[0].set_title("Real pt vs eta")
 axs[0].set_xlabel("pt")
 axs[0].set_ylabel("eta")
 
-axs[1].hist2d(synthetic[:, 0], synthetic[:, 1], bins=50, cmap='Reds')
+im1 = axs[1].imshow(
+    H_fake.T,
+    origin="lower",
+    extent=extent,
+    aspect="auto",
+    cmap="Reds",
+    norm=norm,
+)
 axs[1].set_title("Fake pt vs eta")
 axs[1].set_xlabel("pt")
 axs[1].set_ylabel("eta")
 
-plt.tight_layout()
+# Colorbar in its own axis to avoid overlapping/squeezing the right subplot
+divider = make_axes_locatable(axs[1])
+cax = divider.append_axes("right", size="4%", pad=0.15)
+cbar = fig.colorbar(im1, cax=cax)
+cbar.set_label("Counts per bin (log scale)")
+
+
+fig.tight_layout()
+fig.subplots_adjust(right=0.92)
 plt.savefig("pt_vs_eta_2D_hist.png", dpi=300)
 plt.show()
 
 
-#3D Scatter Plot of pt, eta, and mass
+# 3D Scatter Plot of pt, eta, and mass (shared limits + same view)
 fig = plt.figure(figsize=(10, 5))
 
+# Shared limits (real-based robust bounds)
+pt_hi = np.quantile(real_eval[:, 0], 0.995)
+eta_lo, eta_hi = np.quantile(real_eval[:, 1], [0.005, 0.995])
+m_hi = np.quantile(real_eval[:, 3], 0.995)
+
+# Optional: downsample for readability
+n_show = 8000
+ri = np.random.choice(real_eval.shape[0], size=min(n_show, real_eval.shape[0]), replace=False)
+fi = np.random.choice(synthetic.shape[0], size=min(n_show, synthetic.shape[0]), replace=False)
+
 # Real
-ax = fig.add_subplot(121, projection='3d')
-ax.scatter(real_eval[:, 0], real_eval[:, 1], real_eval[:, 3], alpha=0.4, c='blue')
-ax.set_title("Real: pt vs eta vs mass")
-ax.set_xlabel("pt")
-ax.set_ylabel("eta")
-ax.set_zlabel("mass")
+ax1 = fig.add_subplot(121, projection='3d')
+ax1.scatter(real_eval[ri, 0], real_eval[ri, 1], real_eval[ri, 3], alpha=0.25, s=6, c='blue')
+ax1.set_title("Real: pt vs eta vs mass")
+ax1.set_xlabel("pt")
+ax1.set_ylabel("eta")
+ax1.set_zlabel("mass")
+ax1.set_xlim(0, pt_hi)
+ax1.set_ylim(eta_lo, eta_hi)
+ax1.set_zlim(0, m_hi)
+ax1.view_init(elev=20, azim=-60)
 
 # Fake
-ax = fig.add_subplot(122, projection='3d')
-ax.scatter(synthetic[:, 0], synthetic[:, 1], synthetic[:, 3], alpha=0.4, c='red')
-ax.set_title("Fake: pt vs eta vs mass")
-ax.set_xlabel("pt")
-ax.set_ylabel("eta")
-ax.set_zlabel("mass")
+ax2 = fig.add_subplot(122, projection='3d')
+ax2.scatter(synthetic[fi, 0], synthetic[fi, 1], synthetic[fi, 3], alpha=0.25, s=6, c='red')
+ax2.set_title("Fake: pt vs eta vs mass")
+ax2.set_xlabel("pt")
+ax2.set_ylabel("eta")
+ax2.set_zlabel("mass")
+ax2.set_xlim(0, pt_hi)
+ax2.set_ylim(eta_lo, eta_hi)
+ax2.set_zlim(0, m_hi)
+ax2.view_init(elev=20, azim=-60)
 
 plt.tight_layout()
 plt.savefig("3D_scatter_pt_eta_mass.png", dpi=300)
 plt.show()
 
-gen.save("generator_model.h5")
-disc.save("discriminator_model.h5")
+gen.save("generator_model_NEW.h5")
+disc.save("discriminator_model_NEW.h5")
